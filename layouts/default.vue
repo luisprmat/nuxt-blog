@@ -13,6 +13,7 @@ const title = useState('title', () => 'Nuxt 3 blog')
         <div>
           <ul class="flex space-x-12">
             <li><NuxtLink to="/">Inicio</NuxtLink></li>
+            <li><NuxtLink to="/create">Crear</NuxtLink></li>
             <li><NuxtLink to="/about">Nosotros</NuxtLink></li>
             <li><NuxtLink to="/contact">Contacto</NuxtLink></li>
           </ul>
