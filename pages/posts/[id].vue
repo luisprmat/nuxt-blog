@@ -1,4 +1,7 @@
 <script setup>
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
+
 const title = useState('title')
 const route = useRoute()
 
@@ -12,7 +15,13 @@ const post = await useNuxtApp().$apiFetch(`/api/posts/${route.params.id}`)
       {{ post.title }}
     </h3>
     <div class="post-meta flex items-center space-x-2 text-gray-700">
-      <div>{{ post.created_at }}</div>
+      <div class="capitalize">
+        {{
+          format(new Date(post.created_at), 'MMMM dd, yyyy', {
+            locale: es,
+          })
+        }}
+      </div>
       <div>&middot;</div>
       <div>{{ post.user.name }}</div>
     </div>

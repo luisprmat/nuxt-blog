@@ -1,4 +1,7 @@
 <script setup>
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
+
 const props = defineProps({
   post: Object,
 })
@@ -12,11 +15,19 @@ const props = defineProps({
       }}</NuxtLink>
     </h3>
     <div class="post-meta flex items-center space-x-2 text-gray-700">
-      <div>{{ props.post.created_at }}</div>
+      <div class="capitalize">
+        {{
+          format(new Date(props.post.created_at), 'MMMM dd, yyyy', {
+            locale: es,
+          })
+        }}
+      </div>
       <div>&middot;</div>
       <div>{{ props.post.user.name }}</div>
     </div>
-    <div class="post-preview mt-4 leading-relaxed">{{ props.post.body }}</div>
+    <div class="post-preview mt-4 line-clamp-3 leading-relaxed">
+      {{ props.post.body }}
+    </div>
     <div class="mt-4">
       <NuxtLink
         :to="`/posts/${props.post.id}`"
