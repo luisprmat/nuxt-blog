@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  middleware: ['guest'],
+})
+
 const title = useState('title')
 const router = useRouter()
 const name = ref('')
@@ -25,6 +29,12 @@ const register = async () => {
         password_confirmation: passwordConfirm.value,
       },
     })
+
+    const user = await $apiFetch('/api/user')
+
+    const { setUser } = useAuth()
+    setUser(user.name)
+
     alert('Usuario registrado con éxito')
     // router.push('/my-info')
     window.location.pathname = '/my-info'

@@ -1,6 +1,7 @@
 <script setup>
 const title = useState('title', () => 'Nuxt 3 blog')
 const { $apiFetch } = useNuxtApp()
+const { removeUser, isLoggedIn, getUser } = useAuth()
 
 const logout = async () => {
   try {
@@ -10,6 +11,7 @@ const logout = async () => {
   } catch (err) {
     console.log(err.data)
   } finally {
+    removeUser()
     window.location.pathname = '/'
   }
 }
@@ -24,16 +26,25 @@ const logout = async () => {
           <NuxtLink to="/">Logo</NuxtLink>
         </div>
         <div>
-          <ul class="flex space-x-12">
-            <li><NuxtLink to="/">Inicio</NuxtLink></li>
-            <li><NuxtLink to="/login">Login</NuxtLink></li>
-            <li><NuxtLink to="/register">Registro</NuxtLink></li>
-            <li><NuxtLink to="/my-info">Mi Perfil</NuxtLink></li>
-            <li><NuxtLink to="/create">Crear</NuxtLink></li>
-            <li><NuxtLink to="/about">Nosotros</NuxtLink></li>
-            <li><NuxtLink to="/contact">Contacto</NuxtLink></li>
-            <li><NuxtLink href="#" @click.prevent="logout">Salir</NuxtLink></li>
-          </ul>
+          <ClientOnly>
+            <ul class="flex space-x-12">
+              <li><NuxtLink to="/">Inicio</NuxtLink></li>
+              <li v-if="!isLoggedIn"><NuxtLink to="/login">Login</NuxtLink></li>
+              <li v-if="!isLoggedIn">
+                <NuxtLink to="/register">Registro</NuxtLink>
+              </li>
+              <li v-if="isLoggedIn">
+                <NuxtLink to="/my-info">Mi Perfil</NuxtLink>
+              </li>
+              <li v-if="isLoggedIn"><NuxtLink to="/create">Crear</NuxtLink></li>
+              <li><NuxtLink to="/about">Nosotros</NuxtLink></li>
+              <li><NuxtLink to="/contact">Contacto</NuxtLink></li>
+              <li v-if="isLoggedIn">
+                <NuxtLink href="#" @click.prevent="logout">Salir</NuxtLink>
+              </li>
+              <li>{{ getUser()?.name }}</li>
+            </ul>
+          </ClientOnly>
         </div>
       </div>
     </nav>
