@@ -13,9 +13,13 @@ const { $apiFetch } = useNuxtApp()
 const post = ref(null)
 
 onMounted(async () => {
-  post.value = await $apiFetch(`/api/posts/${route.params.id}`)
-  title.value = post.value.title
-  body.value = post.value.body
+  try {
+    post.value = await $apiFetch(`/api/postsAuth/${route.params.id}`)
+    title.value = post.value.title
+    body.value = post.value.body
+  } catch (error) {
+    window.location.pathname = '/'
+  }
 })
 
 const updatePost = async () => {
@@ -39,8 +43,36 @@ const updatePost = async () => {
 
     router.push('/my-info')
   } catch (err) {
+    if (err.response.status === 403) {
+      alert(err.data.message)
+      isLoading.value = false
+
+      return
+    }
     console.log(err.data)
     errors.value = Object.values(err.data.errors).flat()
+    isLoading.value = false
+  }
+}
+
+const deletePost = async () => {
+  isLoading.value = true
+
+  try {
+    const post = await $apiFetch(`/api/posts/${route.params.id}`, {
+      method: 'DELETE',
+    })
+
+    isLoading.value = false
+
+    title.value = ''
+    body.value = ''
+
+    alert('Post eliminado.')
+
+    router.push('/my-info')
+  } catch (err) {
+    console.log(err.data)
     isLoading.value = false
   }
 }
@@ -75,13 +107,24 @@ const updatePost = async () => {
           class="mt-2 w-full rounded px-2 py-2 shadow"
         ></textarea>
       </div>
-      <div>
-        <button
-          class="inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-        >
-          Actualizar post
-        </button>
-        <span v-show="isLoading" class="ml-2">Cargando ...</span>
+      <div class="flex items-center justify-between">
+        <div>
+          <button
+            class="inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            Actualizar post
+          </button>
+          <span v-show="isLoading" class="ml-2">Cargando ...</span>
+        </div>
+        <div>
+          <button
+            type="button"
+            class="inline-block rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+            @click="deletePost"
+          >
+            Eliminar post
+          </button>
+        </div>
       </div>
     </form>
   </div>
