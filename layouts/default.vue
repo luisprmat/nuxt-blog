@@ -1,5 +1,18 @@
 <script setup>
 const title = useState('title', () => 'Nuxt 3 blog')
+const { $apiFetch } = useNuxtApp()
+
+const logout = async () => {
+  try {
+    await $apiFetch('/logout', {
+      method: 'POST',
+    })
+  } catch (err) {
+    console.log(err.data)
+  } finally {
+    window.location.pathname = '/'
+  }
+}
 </script>
 
 <template>
@@ -13,9 +26,13 @@ const title = useState('title', () => 'Nuxt 3 blog')
         <div>
           <ul class="flex space-x-12">
             <li><NuxtLink to="/">Inicio</NuxtLink></li>
+            <li><NuxtLink to="/login">Login</NuxtLink></li>
+            <li><NuxtLink to="/register">Registro</NuxtLink></li>
+            <li><NuxtLink to="/my-info">Mi Perfil</NuxtLink></li>
             <li><NuxtLink to="/create">Crear</NuxtLink></li>
             <li><NuxtLink to="/about">Nosotros</NuxtLink></li>
             <li><NuxtLink to="/contact">Contacto</NuxtLink></li>
+            <li><NuxtLink href="#" @click.prevent="logout">Salir</NuxtLink></li>
           </ul>
         </div>
       </div>
